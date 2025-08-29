@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carburate Pattern Animation</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="controls-dropdown">
+        <button class="dropdown-toggle" id="dropdown-toggle">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1 1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            Settings
+        </button>
+        <div class="dropdown-content" id="dropdown-content">
+            <div class="control-group">
+                <h3>Animation</h3>
+                <div class="control-item">
+                    <label for="sensitivity">Mouse Sensitivity</label>
+                    <input type="range" id="sensitivity" min="0.1" max="2" step="0.1" value="2.0">
+                    <span class="value-display" id="sensitivity-value">2.0x</span>
+                </div>
+                <div class="control-item">
+                    <label for="falloff-size">Falloff Size</label>
+                    <input type="range" id="falloff-size" min="0.1" max="1" step="0.1" value="0.7">
+                    <span class="value-display" id="falloff-size-value">0.7</span>
+                </div>
+                <div class="control-item">
+                    <label for="animation-speed">Animation Speed</label>
+                    <input type="range" id="animation-speed" min="0.1" max="1" step="0.1" value="0.1">
+                    <span class="value-display" id="animation-speed-value">0.1s</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Pattern</h3>
+                <div class="control-item">
+                    <label for="rectangle-width">Rectangle Width</label>
+                    <input type="range" id="rectangle-width" min="5" max="50" step="1" value="10">
+                    <span class="value-display" id="rectangle-width-value">10px</span>
+                </div>
+                <div class="control-item">
+                    <label for="rectangle-height">Tall Rectangle Height</label>
+                    <input type="range" id="rectangle-height" min="15" max="40" step="1" value="28">
+                    <span class="value-display" id="rectangle-height-value">28px</span>
+                </div>
+                <div class="control-item">
+                    <label for="short-height">Short Rectangle Height</label>
+                    <input type="range" id="short-height" min="10" max="30" step="1" value="16">
+                    <span class="value-display" id="short-height-value">16px</span>
+                </div>
+                <div class="control-item">
+                    <label for="horizontal-gap">Horizontal Gap</label>
+                    <input type="range" id="horizontal-gap" min="0" max="20" step="1" value="9">
+                    <span class="value-display" id="horizontal-gap-value">9px</span>
+                </div>
+                <div class="control-item">
+                    <label for="vertical-gap">Vertical Gap</label>
+                    <input type="range" id="vertical-gap" min="10" max="100" step="5" value="45">
+                    <span class="value-display" id="vertical-gap-value">45px</span>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <h3>Colors</h3>
+                <div class="control-item">
+                    <label for="primary-color">Primary Color</label>
+                    <input type="color" id="primary-color" value="#2e4b9c">
+                </div>
+                <div class="control-item">
+                    <label for="secondary-color">Secondary Color</label>
+                    <input type="color" id="secondary-color" value="#1e3a8a">
+                </div>
+                <div class="control-item">
+                    <label for="background-color">Background Color</label>
+                    <input type="color" id="background-color" value="#0f172a">
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="pattern-container">
+        <svg id="animated-pattern" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- Pattern will be generated by JavaScript -->
+        </svg>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>

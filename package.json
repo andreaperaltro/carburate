@@ -1,0 +1,21 @@
+{
+  "name": "carburate-pattern-animation",
+  "version": "1.0.0",
+  "description": "Animated SVG pattern that responds to mouse movement",
+  "main": "index.html",
+  "scripts": {
+    "dev": "npx http-server -p 3000 -c-1 --cors",
+    "start": "npx http-server -p 3000 -c-1 --cors"
+  },
+  "keywords": [
+    "svg",
+    "animation",
+    "pattern",
+    "interactive"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}
