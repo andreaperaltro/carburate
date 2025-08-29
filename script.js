@@ -2,16 +2,23 @@ class PatternAnimator {
     constructor() {
         this.svg = document.getElementById('animated-pattern');
         this.sensitivity = 2.0;
-        this.falloffSize = 0.7;
+        this.falloffSize = 0.6;
         this.animationSpeed = 0.1;
-        this.mouseX = 0;
-        this.mouseY = 0;
+        this.mouseX = window.innerWidth / 2;
+        this.mouseY = window.innerHeight / 2;
         this.rectangles = [];
         
+        // Smooth animation position tracking
+        this.currentAnimX = window.innerWidth / 2;
+        this.currentAnimY = window.innerHeight / 2;
+        this.smoothingFactor = 0.05; // Lower = smoother
+        
+
+        
         // New pattern properties
-        this.rectangleWidth = 10;
-        this.tallHeight = 28;
-        this.shortHeight = 16;
+        this.rectangleWidth = 5;
+        this.tallHeight = 18;
+        this.shortHeight = 10;
         this.horizontalGap = 9;
         this.verticalGap = 45;
         
@@ -104,12 +111,53 @@ class PatternAnimator {
                 this.rectangles.push(rect);
             }
         }
+        
+        // Set initial auto-animation center
+        this.autoAnimationCenterX = viewportWidth / 2;
+        this.autoAnimationCenterY = viewportHeight / 2;
+        
+        // Initialize positions
+        this.lastMousePos = { x: this.autoAnimationCenterX, y: this.autoAnimationCenterY };
+        this.targetAutoPos = { x: this.autoAnimationCenterX, y: this.autoAnimationCenterY };
     }
     
     setupEventListeners() {
+        // Mouse events
         document.addEventListener('mousemove', (e) => {
             this.mouseX = e.clientX;
             this.mouseY = e.clientY;
+            this.lastMouseMove = Date.now();
+            
+            // Start transition if we were in auto-animation
+            if (this.isTransitioning) {
+                this.startTransition();
+            }
+        });
+        
+        // Touch events for mobile
+        document.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            this.mouseX = touch.clientX;
+            this.mouseY = touch.clientY;
+            this.lastMouseMove = Date.now();
+            
+            // Start transition if we were in auto-animation
+            if (this.isTransitioning) {
+                this.startTransition();
+            }
+        });
+        
+        document.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            this.mouseX = touch.clientX;
+            this.mouseY = touch.clientY;
+            this.lastMouseMove = Date.now();
+            
+            // Start transition if we were in auto-animation
+            if (this.isTransitioning) {
+                this.startTransition();
+            }
         });
         
         // Handle window resize
@@ -242,16 +290,29 @@ class PatternAnimator {
         document.head.appendChild(style);
     }
     
+
+    
+    getAnimationPosition() {
+        // Always smoothly follow the mouse position
+        this.currentAnimX += (this.mouseX - this.currentAnimX) * this.smoothingFactor;
+        this.currentAnimY += (this.mouseY - this.currentAnimY) * this.smoothingFactor;
+        
+        return { x: this.currentAnimX, y: this.currentAnimY };
+    }
+    
     animate() {
         const maxDistance = Math.min(window.innerWidth, window.innerHeight) * this.falloffSize;
+        const animationPos = this.getAnimationPosition();
+        
+
         
         this.rectangles.forEach(rect => {
             const rectX = parseFloat(rect.getAttribute('x')) + this.rectangleWidth / 2;
             const rectY = parseFloat(rect.getAttribute('y')) + parseFloat(rect.getAttribute('height')) / 2;
             
             const distance = Math.sqrt(
-                Math.pow(this.mouseX - rectX, 2) + 
-                Math.pow(this.mouseY - rectY, 2)
+                Math.pow(animationPos.x - rectX, 2) + 
+                Math.pow(animationPos.y - rectY, 2)
             );
             
             if (distance < maxDistance) {
