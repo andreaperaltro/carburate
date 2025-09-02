@@ -99,13 +99,19 @@
                     <input type="file" id="file-input" accept="image/*" style="display: none;">
                 </div>
             </div>
+            
+            <div class="image-preview" id="image-preview" style="display: none;">
+                <h3>Original Image</h3>
+                <div class="image-thumbnail">
+                    <canvas id="original-canvas" class="thumbnail-canvas"></canvas>
+                    <button class="change-image-btn" onclick="document.getElementById('file-input').click()">
+                        Change Image
+                    </button>
+                </div>
+            </div>
         </div>
 
         <div class="preview-section" id="preview-section" style="display: none;">
-            <div class="image-preview">
-                <h3>Original Image</h3>
-                <canvas id="original-canvas" class="preview-canvas"></canvas>
-            </div>
             <div class="halftone-preview">
                 <h3>Halftone Result</h3>
                 <canvas id="halftone-canvas" class="preview-canvas"></canvas>

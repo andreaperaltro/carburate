@@ -43,7 +43,10 @@ class HalftoneProcessor {
         controls.forEach(controlId => {
             const control = document.getElementById(controlId);
             if (control) {
-                control.addEventListener('input', () => this.updateHalftone());
+                control.addEventListener('input', () => {
+                    this.updateHalftone();
+                    this.updateValueDisplay(controlId);
+                });
                 this.updateValueDisplay(controlId);
             }
         });
@@ -71,6 +74,9 @@ class HalftoneProcessor {
                     unit = 'px';
                     break;
                 case 'dot-density':
+                    unit = 'x';
+                    break;
+                case 'tall-ratio':
                     unit = 'x';
                     break;
                 case 'min-height':
@@ -149,14 +155,28 @@ class HalftoneProcessor {
         const maxHeight = 600;
         const scale = Math.min(maxWidth / this.originalImage.width, maxHeight / this.originalImage.height);
         
-        canvas.width = this.originalImage.width * scale;
-        canvas.height = this.originalImage.height * scale;
+        // Store the full-size dimensions for processing
+        this.fullWidth = this.originalImage.width * scale;
+        this.fullHeight = this.originalImage.height * scale;
+        
+        // Set thumbnail size (200x150) with proper aspect ratio
+        const thumbnailWidth = 200;
+        const thumbnailHeight = 150;
+        const thumbnailScale = Math.min(thumbnailWidth / this.originalImage.width, thumbnailHeight / this.originalImage.height);
+        
+        canvas.width = this.originalImage.width * thumbnailScale;
+        canvas.height = this.originalImage.height * thumbnailScale;
+        
+        // Center the image in the thumbnail area
+        const offsetX = (thumbnailWidth - canvas.width) / 2;
+        const offsetY = (thumbnailHeight - canvas.height) / 2;
         
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(this.originalImage, 0, 0, canvas.width, canvas.height);
     }
 
     showPreviewSection() {
+        document.getElementById('image-preview').style.display = 'block';
         document.getElementById('preview-section').style.display = 'grid';
     }
 
@@ -171,16 +191,25 @@ class HalftoneProcessor {
         const halftoneColor = document.getElementById('halftone-color').value;
         const bgColor = document.getElementById('halftone-bg').value;
 
-        // Set canvas size
-        this.processedCanvas.width = this.originalCanvas.width;
-        this.processedCanvas.height = this.originalCanvas.height;
+        // Set canvas size to full size for high-quality processing
+        this.processedCanvas.width = this.fullWidth;
+        this.processedCanvas.height = this.fullHeight;
 
         // Clear canvas
         this.ctx.fillStyle = bgColor;
         this.ctx.fillRect(0, 0, this.processedCanvas.width, this.processedCanvas.height);
 
-        // Get image data from original canvas
-        const imageData = this.originalCtx.getImageData(0, 0, this.originalCanvas.width, this.originalCanvas.height);
+        // Create a temporary canvas for full-size image processing
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = this.fullWidth;
+        tempCanvas.height = this.fullHeight;
+        
+        // Draw the full-size image to the temp canvas
+        tempCtx.drawImage(this.originalImage, 0, 0, this.fullWidth, this.fullHeight);
+        
+        // Get image data from temp canvas
+        const imageData = tempCtx.getImageData(0, 0, this.fullWidth, this.fullHeight);
         const data = imageData.data;
 
         // Process image data
