@@ -309,14 +309,28 @@ class HalftoneProcessor {
         const halftoneColor = document.getElementById('halftone-color').value;
         const bgColor = document.getElementById('halftone-bg').value;
         
-        // Get the processed image data to recreate the pattern
-        const imageData = this.ctx.getImageData(0, 0, width, height);
+        // Use the same temporary canvas approach as updateHalftone for consistency
+        const tempCanvas = document.createElement('canvas');
+        const tempCtx = tempCanvas.getContext('2d');
+        tempCanvas.width = this.fullWidth;
+        tempCanvas.height = this.fullHeight;
+        
+        // Draw the full-size image to the temp canvas
+        tempCtx.drawImage(this.originalImage, 0, 0, this.fullWidth, this.fullHeight);
+        
+        // Get image data from temp canvas
+        const imageData = tempCtx.getImageData(0, 0, this.fullWidth, this.fullHeight);
         const data = imageData.data;
+        
+        // Process image data with current settings
+        const contrast = parseFloat(document.getElementById('contrast').value);
+        const brightness = parseInt(document.getElementById('brightness').value);
+        const processedData = this.processImageData(data, contrast, brightness);
         
         let svgContent = `<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">`;
         svgContent += `<rect width="${width}" height="${height}" fill="${bgColor}"/>`;
         
-        // Recreate the halftone pattern as SVG rectangles
+        // Use the EXACT same algorithm as createHalftonePattern
         const cellWidth = Math.max(2, dotSize + dotSpacing);
         const cellHeight = Math.max(2, cellWidth);
         
@@ -329,16 +343,18 @@ class HalftoneProcessor {
                 // Ensure we're within bounds
                 if (sampleX < width && sampleY < height) {
                     const pixelIndex = (sampleY * width + sampleX) * 4;
-                    if (pixelIndex < data.length) {
-                        const intensity = data[pixelIndex] / 255;
+                    if (pixelIndex < processedData.length) {
+                        const intensity = processedData[pixelIndex] / 255;
                         
                         // Create continuous halftone effect based on brightness
+                        // Darker areas = taller rectangles, lighter areas = shorter rectangles
                         const maxHeight = Math.max(1, cellHeight * dotDensity);
                         const rectangleHeight = maxHeight * (1 - intensity);
                         
                         // Only draw rectangles if they have meaningful height
                         const minHeight = Math.max(1, parseInt(document.getElementById('min-height').value));
                         if (rectangleHeight >= minHeight) {
+                            // Draw rectangle similar to the main pattern
                             const rectWidth = Math.max(1, dotSize);
                             const rectX = x + (cellWidth - rectWidth) / 2;
                             const rectY = y + (cellHeight - rectangleHeight) / 2;
